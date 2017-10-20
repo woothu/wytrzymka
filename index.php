@@ -26,7 +26,13 @@ Strona główna
 </head>
 <body >
 <?php
-    include "szkielet.php";
+    session_start();
+    if(isset($_SESSION['nick'])){
+        include "szkieletzal.php";
+//        echo $_SESSION['nick'];
+    }else{
+        include "szkielet.php";
+    }
 ?>
 <p class="glowne">Witaj na stronie! Ma ona za zadanie pomoc w nauce do przedmiotu wytrzymałość materiałów!</p>
 

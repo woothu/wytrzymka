@@ -32,7 +32,13 @@ initial-scale=1">
 
 <body>
 <?php
-    include "szkielet.php";
+    session_start();
+    if(isset($_SESSION['nick'])){
+        include "szkieletzal.php";
+//        echo $_SESSION['nick'];
+    }else{
+        include "szkielet.php";
+    }
     include "profil1.php";
 ?>
 

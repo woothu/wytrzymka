@@ -105,8 +105,8 @@
                     <li id="naglowek4"><a href="zginanie.php">Zginanie</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li id="zarejestruj"><a href="rejestracja.php"><span class="glyphicon glyphicon-user"></span> Zarejestruj się</a></li>
-                    <li id="zaloguj"><a href="zaloguj.php"><span class="glyphicon glyphicon-log-in"></span> Zaloguj</a></li>
+                    <li><a href="wyloguj.php"><span class="glyphicon glyphicon-log-out"></span> Wyloguj</a></li>
+                    <li id="konto"><a href="konto.php"><span class="glyphicon glyphicon-user"></span>Moje konto</a></li>
                 </ul>
 
             </div>
