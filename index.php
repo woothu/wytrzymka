@@ -29,8 +29,9 @@ Strona główna
     session_start();
     if(isset($_SESSION['nick'])){
         include "szkieletzal.php";
-//        echo $_SESSION['nick'];
-    }else{
+        echo $_SESSION['nick'];
+        echo $_SESSION['img1'];
+        }else{
         include "szkielet.php";
     }
 ?>

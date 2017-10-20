@@ -34,9 +34,11 @@ initial-scale=1">
     session_start();
     if(isset($_SESSION['nick'])){
         include "szkieletzal.php";
+        $_SESSION['logged']=1;
 //        echo $_SESSION['nick'];
     }else{
         include "szkielet.php";
+        $_SESSION['logged']=0;
     }
     include "profil3.php";
 ?>

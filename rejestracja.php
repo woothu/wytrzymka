@@ -87,6 +87,7 @@ $haslo = md5($haslo); //szyfrowanie hasla
 $sql = "INSERT INTO users (login, email, password, ip) VALUES('$nick','$email','$haslo','$ip')";
 
 if(mysqli_query($conn, $sql)){
+mkdir("users/$nick");
 echo '<br><span style="color: green; font-weight: bold;">Zostałeś zarejestrowany '.$nick.'. Teraz możesz się zalogować</span><br>';
 echo '<br><a href="zaloguj.php">Logowanie</a>';
 }else{
