@@ -71,6 +71,7 @@ $istnick = mysqli_fetch_array((mysqli_query($conn,"SELECT COUNT(*) FROM `users` 
 echo 'Logowanie nieudane. Sprawdź pisownię nicku oraz hasła.';
     } else {
 $_SESSION['nick'] = $login;
+$_SESSION['id'] =(mysqli_fetch_object(mysqli_query($conn,"SELECT id FROM users WHERE `login` = '$login'")))->id;
 die("
 <script>
     location.href = 'index.php'
