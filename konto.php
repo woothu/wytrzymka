@@ -39,25 +39,41 @@ initial-scale=1">
     location.href = 'index.php'
 </script>");
     }
-?>
-        <?php
+
+    $id = $_SESSION["id"];
     $login = $_SESSION["nick"];
     $conn = mysqli_connect("localhost","root","","woothu") or die("Nie mozna polaczyc sie z baza danych:". mysqli_connect_error());
-//nadawanie wartosci obrazkom sesji
-    for($i=5; $i>0 ; $i--){
-    $x='img'.$i;
-    $sql="SELECT $x FROM users WHERE `login` = '$login'";
-    $img = (mysqli_fetch_object(mysqli_query($conn,$sql)))->$x;
-//     echo $x;
-$_SESSION[$x] = $img;
-        if(isset($_SESSION[$x])){
-        $dir  = "users/$login/$_SESSION[$x].png";
-        echo "<div class='glowne'><p>Wynik $x:</p><img src='$dir'></div>";
-        }
+
+    //obliczenie liczby zapisanych na koncie wynikow
+    $lscreenow = mysqli_fetch_array((mysqli_query($conn,"SELECT COUNT(*) FROM screen WHERE loginid='$id'")),MYSQLI_NUM);
+    $lscr = $lscreenow[0];
+
+    //wybieranie wynikow uzytkownika
+    $query = mysqli_query($conn,"SELECT * FROM screen WHERE loginid='$id'");
+    $czasy = array();
+    $rodzaje = array();
+    $daty = array();
+while($row = mysqli_fetch_array($query)) {
+    // Append to the array
+    $czasy[] = $row['time'];
+    $rodzaje[] =$row['typ'];
+    $daty[] = $row['date'];
 }
-if(!isset($_SESSION["img1"])){
+
+    if($lscr == 0){
        echo "Nie masz jeszcze żadnych screenów";
+    }else{
+       $count = count($czasy)-1;
+       for($i=$count; $i>-1 ; $i--){
+        $w= $i+1;
+        $czas = $czasy[$i];
+        $dir  = "users/$login/$czas.png";
+        echo "<div class='glowne'><p>$w. Rozwiązanie obliczenia $rodzaje[$i] zapisane $daty[$i]:</p><img src='$dir'></div>";
         }
+
+    }
+
+
 ?>
 
 

@@ -1,145 +1,145 @@
 <?php
+
+//kiedy ktoś chce zapisać wyniki
 if (isset($_POST['action'])){
+    $id = $_SESSION["id"];
     $login = $_SESSION["nick"];
+    $typ ='zginania';
+    $time=time();
+    $date = date("d/m/Y H:i:s");
+//    $data = funkcja(time) może jeszcze typ przekroju
+    $conn = mysqli_connect("localhost","root","","woothu") or die("Nie mozna polaczyc sie z baza danych:". mysqli_connect_error());
+    //obliczenie liczby zapisanych na koncie wynikow
+    $lscreenow = mysqli_fetch_array((mysqli_query($conn,"SELECT COUNT(*) FROM screen WHERE loginid='$id'")),MYSQLI_NUM);
 
-    //Jeżeli użytkownik jest zalogowany
-    if($login){
-        $conn = mysqli_connect("localhost","root","","woothu") or die("Nie mozna polaczyc sie z baza danych:". mysqli_connect_error());
+    //usuwanie jednego screena gdy jego limit screenów jest osiągnięty
+    while($lscreenow[0]>3){
+        //wyrzucanie zdjęcia z folderu
+        $czasARRAY = mysqli_fetch_array(mysqli_query($conn, "SELECT time FROM screen WHERE loginid=$id ORDER BY id LIMIT 1"));
+        $czasSTRING = $czasARRAY['time'];
+        unlink('users/'.$login. '/' . $czasSTRING . '.png');
 
-            for($i=1; $i<6 ; $i++){
-            $x='img'.$i;
-            $sql="SELECT $x FROM users WHERE `login` = '$login'";
-            $img = (mysqli_fetch_object(mysqli_query($conn,$sql)))->$x;
-            $_SESSION[$x] = $img;
-            if(!isset($_SESSION[$x])){
-                $time=time();
+        // wyrzucanie wiersza z bd
+        mysqli_query($conn, "DELETE FROM screen WHERE loginid=$id ORDER BY time LIMIT 1");
+        $lscreenow = mysqli_fetch_array((mysqli_query($conn,"SELECT COUNT(*) FROM screen WHERE loginid='$id'")),MYSQLI_NUM);
+    }
+     // wrzucanie screena do folderu
+    $result = file_put_contents( 'users/'.$login. '/' . $time . '.png', base64_decode( str_replace('data:image/png;base64,','',$_POST['image'] ) ) );
 
-                // robienie screena
-                $result = file_put_contents( 'users/'.$login. '/' . $time . '.png', base64_decode( str_replace('data:image/png;base64,','',$_POST['image'] ) ) );
-
-                //wpisywanie do bazy
-                $sql2 = "UPDATE users SET $x = '$time' WHERE login = '$login'";
-                mysqli_query($conn, $sql2);
-                die();
-                }
-            }
-                //kiedy nie ma miejsca
-                $time=time();
-                $result = file_put_contents( 'users/'.$login. '/' . $time . '.png', base64_decode( str_replace('data:image/png;base64,','',$_POST['image'] ) ) );
-                $sql3 = "UPDATE users SET img5 = '$time' WHERE login = '$login'";
-                mysqli_query($conn, $sql3);
+    //wpisywanie do bazy
+    mysqli_query($conn, "INSERT INTO screen (loginid,time,typ,date) VALUES ('$id','$time', '$typ','$date')");
 
 }
-}
+
 ?>
 
-<!--    parametry-->
-<div class="glowne" id="parametry">
-    <h2>Wprowadzanie danych do obliczeń:</h2>
-    <!--        dlugosc profilu-->
-    <label for="dlugosc">Długość profilu [mm]:</label>
-    <input type="number" name="dlugosc" id="dlugosc" size=20px>
-    <br /><br />
+    <!--    parametry-->
+    <div class="glowne" id="parametry">
+        <h2>Wprowadzanie danych do obliczeń:</h2>
+        <!--        dlugosc profilu-->
+        <label for="dlugosc">Długość profilu [mm]:</label>
+        <input type="number" name="dlugosc" id="dlugosc" size=20px>
+        <br /><br />
 
-    <select id="wybor_mat">
+        <select id="wybor_mat">
           <option value="-1">Wybierz materiał</option>
           <option value="0">Stal</option>
           <option value="1">Aluminium</option>
         </select>
 
-    <select id="wybor_profilu">
+        <select id="wybor_profilu">
           <option value="-1">Wybierz profil</option>
           <option value="0">Kołowy</option>
           <option value="1">Kołowy z otworem</option>
         </select>
 
-    <select id="wybor_podpory">
+        <select id="wybor_podpory">
           <option value="-1">Wybierz podpory</option>
           <option value="0">Stała i przesuwna</option>
           <option value="1">Utwierdzenie sztywne z lewej strony</option>
         </select>
-    <br />
-    <!--// pierwsze wyswietlanie-->
-    <div id="wyswietlanie" style="display:none">
+        <br />
+        <!--// pierwsze wyswietlanie-->
+        <div id="wyswietlanie" style="display:none">
 
-        <!--Przekroje -->
-        <div id="przekroje">
-            <div id="przekroj0" style="display:none">
-                <label for="srednica2">Średnica [mm]:</label>
-                <input type="number" name="srednica2" class="pole" id="srednica2" size=20px>
-                <br />
+            <!--Przekroje -->
+            <div id="przekroje">
+                <div id="przekroj0" style="display:none">
+                    <label for="srednica2">Średnica [mm]:</label>
+                    <input type="number" name="srednica2" class="pole" id="srednica2" size=20px>
+                    <br />
+                </div>
+                <div id="przekroj1" style="display:none">
+                    <label for="srednica3">Średnica [mm]:</label>
+                    <input type="number" name="srednica3" class="pole" id="srednica3" size=20px>
+                    <br />
+                    <label for="wew_srednica3">Wewnętrzna średnica [mm]:</label>
+                    <input type="number" name="wew_srednica3" class="pole" id="wew_srednica3" size=20px>
+                </div>
             </div>
-            <div id="przekroj1" style="display:none">
-                <label for="srednica3">Średnica [mm]:</label>
-                <input type="number" name="srednica3" class="pole" id="srednica3" size=20px>
+
+            <!--Podpory-->
+            <div id="podpory">
+                <div id="podpora0" style="display:none">
+                    <P>Podpora stała i przesuwna</P>
+                    <label for="punktpodpory1">Podpora stała w punkcie:</label>
+                    <input type="number" id="punktpodpory1">
+                    <br />
+                    <label for="punktpodpory2">Podpora przesuwna w punkcie:</label>
+                    <input type="number" id="punktpodpory2">
+                    <br />
+                </div>
+                <div id="podpora1" style="display:none">
+                    <p>Utwierdzenie sztywne z lewej strony</p>
+                </div>
+            </div>
+
+            <div id="elementy0"></div>
+            <div id="przyciski_elementy">
+                <input type="button" id="dodaj_sile" value="Dodaj siłę">
+                <input type="button" id="dodaj_moment" value="Dodaj moment">
+                <input type="button" id="dodaj_obciazenie" value="Dodaj obciazenie">
+                <input type="button" id="licz_napr" value="Oblicz">
+                <input style="display:none" type="submit" name="action" id="screen1" value="Zapisz wyniki na koncie">
                 <br />
-                <label for="wew_srednica3">Wewnętrzna średnica [mm]:</label>
-                <input type="number" name="wew_srednica3" class="pole" id="wew_srednica3" size=20px>
             </div>
         </div>
 
-        <!--Podpory-->
-        <div id="podpory">
-            <div id="podpora0" style="display:none">
-                <P>Podpora stała i przesuwna</P>
-                <label for="punktpodpory1">Podpora stała w punkcie:</label>
-                <input type="number" id="punktpodpory1">
-                <br />
-                <label for="punktpodpory2">Podpora przesuwna w punkcie:</label>
-                <input type="number" id="punktpodpory2">
-                <br />
+    </div>
+    <div id="screen">
+        <!--wyswietlanie wynikow-->
+        <div class="glowne" id="wyniki" style="display:none">
+            <!--    wyswietlanie parametrow materialu oraz przekroju-->
+            <div>
+                <p id="wynik_mat"></p>
+                <label for="polew">Pole powierzchni:<p id="polew"></p></label><br />
+                <label for="momentw">Moment bezwładności względem osi x:<p  id="momentw"></p></label><br />
+                <label for="wskaznikw">Wskaźnik wytrzymałości na zginanie względem osi x:<p  id="wskaznikw"></p></label>
             </div>
-            <div id="podpora1" style="display:none">
-                <p>Utwierdzenie sztywne z lewej strony</p>
-            </div>
+            <!--    //div do wyswietlania-->
+            <div id="wyniki1"></div>
         </div>
+        <!--wyświetlanie wykresow-->
 
-        <div id="elementy0"></div>
-        <div id="przyciski_elementy">
-            <input type="button" id="dodaj_sile" value="Dodaj siłę">
-            <input type="button" id="dodaj_moment" value="Dodaj moment">
-            <input type="button" id="dodaj_obciazenie" value="Dodaj obciazenie">
-            <input type="button" id="licz_napr" value="Oblicz">
-            <input style="display:none" type="button" name="action1" id="screen1" value="Zapisz wyniki na koncie">
-            <br />
-        </div>
+        <div id="chartContainer"></div>
+
+        <div id="chartContainer2"></div>
     </div>
 
-</div>
-<div id="screen">
-    <!--wyswietlanie wynikow-->
-    <div class="glowne" id="wyniki" style="display:none">
-        <!--    wyswietlanie parametrow materialu oraz przekroju-->
-        <div>
-            <p id="wynik_mat"></p>
-            <label for="polew">Pole powierzchni:<p id="polew"></p></label><br />
-            <label for="momentw">Moment bezwładności względem osi x:<p  id="momentw"></p></label><br />
-            <label for="wskaznikw">Wskaźnik wytrzymałości na zginanie względem osi x:<p  id="wskaznikw"></p></label>
-        </div>
-        <!--    //div do wyswietlania-->
-        <div id="wyniki1"></div>
-    </div>
-    <!--wyświetlanie wykresow-->
-
-    <div id="chartContainer"></div>
-
-    <div id="chartContainer2"></div>
-</div>
-
-<!--sprawdzenie wartosci parametrow podczas obliczen-->
-<div id="zapisane_parametry" style="display:none">
-    <input type="number" id="E">
-    <input type="number" id="G">
-    <input type="number" id="pole">
-    <input type="number" id="wskaznik">
-    <input type="number" id="pole">
-    <input type="number" id="liczba_sil" value=1>
-    <!--
+    <!--sprawdzenie wartosci parametrow podczas obliczen-->
+    <div id="zapisane_parametry" style="display:none">
+        <input type="number" id="E">
+        <input type="number" id="G">
+        <input type="number" id="pole">
+        <input type="number" id="wskaznik">
+        <input type="number" id="pole">
+        <input type="number" id="liczba_sil" value=1>
+        <!--
     <input type="number" id="dlugosc">
     <input type="number" id="sila">
 -->
 
-</div>
+    </div>
 
 
 
@@ -248,11 +248,16 @@ if (isset($_POST['action'])){
             //Oblicznie  wynikow
             $("#licz_napr").click(function() {
                 if (dlugosc > 0 && opcja && opcja2 && opcja3 && pole > 0) {
+                    //ponowna mozliwość zrobienia screena:
+                    document.getElementById("screen1").style.borderColor = "#DDDDDD";
+
                     //wyswietl div wyniki
                     document.getElementById("wyniki").style.display = "block";
 
                     //pokaz przycisk zapisz wyniki jezeli user jest zalogowany
-                    if(<?php echo $_SESSION['logged']?>){document.getElementById("screen1").style.display = "inline-block";}
+                    if (<?php echo $_SESSION['logged']?>) {
+                        document.getElementById("screen1").style.display = "inline-block";
+                    }
 
                     // Definiowanie/Czyszczenie tablic
                     var punkt = [];
@@ -485,7 +490,9 @@ if (isset($_POST['action'])){
                     //renderowanie wykresow i reset zmiennych
                     chart.render();
                     chart2.render();
-                    window.scrollTo(0, document.body.scrollHeight);
+                    $("html, body").animate({
+                        scrollTop: $('#screen').offset().top
+                    }, 1000);
                     var naprmax = (Math.max.apply(null, mg2.map(Math.abs))) * 1000 / Wx;
                     document.getElementById('wyniki1').innerHTML += '<h4>Maksymalne naprężenia to: ' + naprmax.toFixed(3) + '[MPa]</h4>'
                 } else {
@@ -504,29 +511,42 @@ if (isset($_POST['action'])){
     <script src="2canvas/html2canvas.js"></script>
     <script>
         $('#screen1').on('click', function() {
+            if (document.getElementById("screen1").style.borderColor != "red") {
 
-            var screenshot = {};
-            var clientHeight = document.getElementById('screen').clientHeight;
-            var BtnVal = $(this).val();
-            html2canvas([document.getElementById('screen')], {
-                //                html2canvas(document.body, {
-                onrendered: function(canvas) {
-                    screenshot.img = canvas.toDataURL("image/png");
-                    screenshot.data = {
-                        'image': screenshot.img,
-                        action: BtnVal
-                    };
-                    $.ajax({
-                        data: screenshot.data,
-                        type: 'post',
-//                        success: function(result) {
-//                            alert("action performed successfully");
-//                        }
+                //do gory strony zeby nie obcinalo screenow
+                $("html, body").animate({
+                    scrollTop: 0
+                }, 500);
+
+                //opoznione robienie screena(po animacji do gory strony):
+                setTimeout(function() {
+
+                    // wylaczenie buttona do nastepnych obliczen:
+                    document.getElementById("screen1").style.borderColor = "red";
+                    var screenshot = {};
+                    var clientHeight = document.getElementById('screen').clientHeight;
+                    var BtnVal = $("#screen1").val();
+                    html2canvas([document.getElementById('screen')], {
+                        onrendered: function(canvas) {
+                            screenshot.img = canvas.toDataURL("image/png");
+                            screenshot.data = {
+                                'image': screenshot.img,
+                                action: BtnVal
+                            };
+                            $.ajax({
+                                data: screenshot.data,
+                                type: 'post',
+                                success: function(result) {
+
+                                }
+                            });
+                        },
+                        height: clientHeight
                     });
-                },
-                //można ustawić wysokość zmiennymi ;)
-                height: clientHeight
-            });
+                }, 501)
+            } else {
+                window.alert("Już zapisałeś wyniki!");
+            }
         });
 
     </script>

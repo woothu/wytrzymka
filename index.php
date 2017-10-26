@@ -30,7 +30,8 @@ Strona główna
     if(isset($_SESSION['nick'])){
         include "szkieletzal.php";
         echo $_SESSION['nick'];
-        echo $_SESSION['img1'];
+        echo "<br />";
+        echo $_SESSION['id'];
         }else{
         include "szkielet.php";
     }
