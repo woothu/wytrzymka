@@ -32,14 +32,15 @@ initial-scale=1">
     session_start();
     include "szkielet.php";
 ?>
-        <form method="POST">
-            <table cellpadding="0" cellspacing="0" width="180">
+        <div class="glowne">
+    <form method="POST">
+            <table cellpadding="0" cellspacing="0" width="180" align="center">
 
                 <tr>
                     <td><br></td>
                 </tr>
                 <tr>
-                    <td width="50">Login:</td>
+                    <td width="50">Login:</td><br/>
                     <td><input type="text" name="login" maxlength="32"></td>
                 </tr>
                 <tr>
@@ -52,8 +53,10 @@ initial-scale=1">
 
             </table>
         </form>
+            </div>
         <?php
-$conn = mysqli_connect("localhost","root","","woothu") or die("Nie mozna polaczyc sie z baza danych:". mysqli_connect_error());
+//$conn = mysqli_connect("localhost","root","","woothu") or die("Nie mozna polaczyc sie z baza danych:". mysqli_connect_error());
+$conn = mysqli_connect("sql.5v.pl","db-user30978","JCLbelieve910","db-user30978") or die("Nie mozna polaczyc sie z baza danych:". mysqli_connect_error());
     if (isset($_POST['action'])){
 $login = substr(addslashes(htmlspecialchars($_POST['login'])),0,32);
 $haslo = substr(addslashes($_POST['haslo']),0,32);
@@ -71,6 +74,7 @@ $istnick = mysqli_fetch_array((mysqli_query($conn,"SELECT COUNT(*) FROM `users` 
 echo 'Logowanie nieudane. Sprawdź pisownię nicku oraz hasła.';
     } else {
 $_SESSION['nick'] = $login;
+$_SESSION['logged'] = 1;
 $_SESSION['id'] =(mysqli_fetch_object(mysqli_query($conn,"SELECT id FROM users WHERE `login` = '$login'")))->id;
 die("
 <script>

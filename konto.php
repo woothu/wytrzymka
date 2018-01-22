@@ -42,7 +42,9 @@ initial-scale=1">
 
     $id = $_SESSION["id"];
     $login = $_SESSION["nick"];
-    $conn = mysqli_connect("localhost","root","","woothu") or die("Nie mozna polaczyc sie z baza danych:". mysqli_connect_error());
+    // na cba: "mysql.cba.pl","woothu","JCLbelieve910","woothu"
+//    $conn = mysqli_connect("localhost","root","","woothu") or die("Nie mozna polaczyc sie z baza danych:". mysqli_connect_error());
+    $conn = mysqli_connect("sql.5v.pl","db-user30978","JCLbelieve910","db-user30978") or die("Nie mozna polaczyc sie z baza danych:". mysqli_connect_error());
 
     //obliczenie liczby zapisanych na koncie wynikow
     $lscreenow = mysqli_fetch_array((mysqli_query($conn,"SELECT COUNT(*) FROM screen WHERE loginid='$id'")),MYSQLI_NUM);
@@ -68,7 +70,7 @@ while($row = mysqli_fetch_array($query)) {
         $w= $i+1;
         $czas = $czasy[$i];
         $dir  = "users/$login/$czas.png";
-        echo "<div class='glowne'><p>$w. Rozwiązanie obliczenia $rodzaje[$i] zapisane $daty[$i]:</p><img src='$dir'></div>";
+        echo "<div><p>$w. Rozwiązanie obliczenia $rodzaje[$i] zapisane $daty[$i]:</p><img style='width:100%' src='$dir'></div>";
         }
 
     }

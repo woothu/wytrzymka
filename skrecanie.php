@@ -39,6 +39,7 @@ initial-scale=1">
 //        echo $_SESSION['nick'];
     }else{
         include "szkielet.php";
+        $_SESSION['logged'] = 0;
     }
     include "profil2.php";
 ?>

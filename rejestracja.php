@@ -34,10 +34,44 @@ initial-scale=1">
 
         <?php
 // zmienna do łączenia zbazą woothu
-$conn = mysqli_connect("localhost","root","","woothu") or die("Nie mozna polaczyc sie z baza danych:". mysqli_connect_error());
+$conn = mysqli_connect("sql.5v.pl","db-user30978","JCLbelieve910","db-user30978") or die("Nie mozna polaczyc sie z baza danych:". mysqli_connect_error());
+//$conn = mysqli_connect("localhost","root","","woothu") or die("Nie mozna polaczyc sie z baza danych:". mysqli_connect_error());
 $ip = $_SERVER['REMOTE_ADDR'];
 //po klinknięciu
-    if (isset($_POST['action'])) {
+?>
+
+    <div class="glowne">
+        <form method="post" action="">
+            <table align="center">
+                <tr class="tlo-b">
+                    <td>Nick:</td>
+                    <td><input maxlength="18" type="text" name="nick"></td>
+                </tr>
+                <tr class="tlek">
+                    <td>Hasło:</td>
+                    <td><input maxlength="32" type="password" name="haslo"></td>
+                </tr>
+                <tr class="tlo-b">
+                    <td>Powtórz hasło:</td>
+                    <td><input maxlength="32" type="password" name="vhaslo"></td>
+                </tr>
+                <tr class="tlo-b">
+                    <td>E-mail:</td>
+                    <td><input type="text" name="email" maxlength="50"></td>
+                </tr>
+                <tr class="tlek">
+                    <td>Powtórz E-mail:</td>
+                    <td><input type="text" maxlength="50" name="vemail"></td>
+                </tr>
+
+
+                <tr>
+                    <td colspan="2" align="center"><input type="submit" name="action" value="Zarejestruj"></td>
+                </tr>
+            </table>
+        </form>
+        </div>
+    <?php     if (isset($_POST['action'])) {
 $nick = substr(addslashes(htmlspecialchars($_POST['nick'])),0,32);
 $haslo = substr(addslashes($_POST['haslo']),0,32);
 $vhaslo = substr($_POST['vhaslo'],0,32);
@@ -77,7 +111,7 @@ $komunikaty .= "Nieprawidłowy adres e-mail<br>"; }
 //jesli cos jest nie tak to blokuje rejestracje i wyswietla bledy
 if ($komunikaty) {
 echo '
-<b>Rejestracja nie powiodła się, popraw następujące błędy:</b><br>
+<b>Rejestracja nie powiodła się, wystąpiły następujące błędy:</b><br>
 '.$komunikaty.'<br>';
 } else {
 //jesli wszystko jest ok dodaje uzytkownika i wyswietla informacje
@@ -91,42 +125,13 @@ mkdir("users/$nick");
 echo '<br><span style="color: green; font-weight: bold;">Zostałeś zarejestrowany '.$nick.'. Teraz możesz się zalogować</span><br>';
 echo '<br><a href="zaloguj.php">Logowanie</a>';
 }else{
-echo "Błąd: Unable to execute $sql" .
+echo "Nie można połączyć się z bazą danych." .
 mysqli_error($conn);
 }
 }
 }
 
 ?>
-        <form method="post" action="">
-            <table>
-                <tr class="tlo-b">
-                    <td>Nick:</td>
-                    <td><input maxlength="18" type="text" name="nick"></td>
-                </tr>
-                <tr class="tlek">
-                    <td>Hasło:</td>
-                    <td><input maxlength="32" type="password" name="haslo"></td>
-                </tr>
-                <tr class="tlo-b">
-                    <td>Powtórz hasło:</td>
-                    <td><input maxlength="32" type="password" name="vhaslo"></td>
-                </tr>
-                <tr class="tlo-b">
-                    <td>E-mail:</td>
-                    <td><input type="text" name="email" maxlength="50"></td>
-                </tr>
-                <tr class="tlek">
-                    <td>Powtórz E-mail:</td>
-                    <td><input type="text" maxlength="50" name="vemail"></td>
-                </tr>
-
-
-                <tr>
-                    <td colspan="2" align="center"><input type="submit" name="action" value="Zarejestruj"></td>
-                </tr>
-            </table>
-        </form>
 
 </body>
 

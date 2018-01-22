@@ -27,16 +27,18 @@ Strona główna
 <body >
 <?php
     session_start();
+//    include("php/rownania/phpequations.class.php");
     if(isset($_SESSION['nick'])){
         include "szkieletzal.php";
-        echo $_SESSION['nick'];
-        echo "<br />";
-        echo $_SESSION['id'];
         }else{
         include "szkielet.php";
     }
 ?>
+
 <p class="glowne">Witaj na stronie! Ma ona za zadanie pomoc w nauce do przedmiotu wytrzymałość materiałów!</p>
+
+
+
 
 </body>
 </html>
